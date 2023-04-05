@@ -1,0 +1,5 @@
+# Cron job every day at midnight
+remove_expire_links_job:
+  cron: "0 0 * * *"
+  class: "RemoveExpireLinksJob"
+  queue: default
