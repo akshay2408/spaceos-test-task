@@ -29,11 +29,15 @@ This README would normally document whatever steps are necessary to get the appl
 ```ruby
   bundle exec sidekiq
 ```
-### 7. Once the above steps are successful, you can check the available jobs for Issuing Rewards Rules on url:
+### 7. Once the above steps are successful, you can check the available jobs for Expired Short Links on url:
 ```ruby
   /sidekiq
 ```
 ### 8. How to run the test suite
 ```ruby
  bundle exec rspec
+```
+### 9. How to update the Api documentation
+```ruby
+ rake rswag:specs:swaggerize
 ```
