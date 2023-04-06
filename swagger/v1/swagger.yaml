@@ -1,0 +1,53 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/short_links":
+    post:
+      summary: Creates a short link
+      tags:
+      - Short Links
+      parameters: []
+      responses:
+        '201':
+          description: short link created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                custom_key:
+                  type: string
+                expires_in_days:
+                  type: integer
+              required:
+              - url
+  "/short_links/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show short link
+      tags:
+      - Get Short Link
+      responses:
+        '200':
+          description: Successful
+        '404':
+          description: Not Found
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000

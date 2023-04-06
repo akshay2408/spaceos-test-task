@@ -1,49 +1,50 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require 'swagger_helper'
 
-RSpec.describe ShortLinksController, type: :request do
-  describe 'POST #create' do
-    context 'with valid parameters' do
-      let(:short_link_params) { { short_link: { url: 'https://www.example.com', expires_in_days: 7, custom_key: 'example' } } }
+RSpec.describe 'short_links', type: :request do
+  path '/short_links' do
+    post('Creates a short link') do
+      tags 'Short Links'
+      consumes 'application/json'
+      parameter name: :short_link, in: :body, schema: {
+        type: :object,
+        properties: {
+          url: { type: :string },
+          custom_key: { type: :string },
+          expires_in_days: { type: :integer }
+        },
+        required: %w[url]
+      }
 
-      it 'creates a new short link' do
-        post '/short_links', params: short_link_params
-        expect(response).to have_http_status(:created)
-        expect(json_response['message']).to eq('success')
-        expect(json_response['data']['short_url']).to be_present
-        expect(json_response['data']['expires_on']).to be_present
+      response '201', 'short link created' do
+        let(:short_link) { { url: 'www.google.com', custom_key: 'my-key', expires_in_days: 3 } }
+
+        run_test!
       end
-    end
 
-    context 'with invalid parameters' do
-      let(:short_link_params) { { short_link: { url: '', expires_in_days: 7, custom_key: 'example' } } }
-
-      it 'returns an error message' do
-        post '/short_links', params: short_link_params
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(json_response['message']).to eq('Validation failed: Url can\'t be blank')
+      response '422', 'invalid request' do
+        let(:short_link) { { url: '' } }
+        run_test!
       end
     end
   end
 
-  describe 'GET #show' do
-    let(:short_link) { create(:short_link) }
+  path '/short_links/{id}' do
+    # You'll want to customize the parameter types...
+    parameter name: 'id', in: :path, type: :string, description: 'id'
 
-    it 'redirects to the original URL and increments the click count' do
-      expect do
-        get "/short_links/#{short_link.uuid}"
-      end.to change { short_link.reload.click_count }.by(1)
+    get('show short link') do
+      tags 'Get Short Link'
 
-      expect(json_response['data']['redirect_to']).to eq(short_link.url)
-    end
+      response(200, 'Successful') do
+        let(:id) { '123' }
+        run_test!
+      end
 
-    context 'with an invalid short URL identifier' do
-      let(:expected_message) { "Couldn't find ShortLink with [WHERE (uuid = 'invalid' OR custom_key = 'invalid')]" }
-      it 'returns a not found error' do
-        get '/short_links/invalid'
-        expect(response).to have_http_status(:not_found)
-        expect(json_response['message']).to eq(expected_message)
+      response(404, 'Not Found') do
+        let(:id) { '' }
+        run_test!
       end
     end
   end

@@ -43,6 +43,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem 'factory_bot_rails'
   gem 'rspec-rails', '~> 6.0.0'
+  gem 'rswag-specs'
 end
 
 group :development do
@@ -54,3 +55,5 @@ gem 'faker'
 gem 'redis'
 gem 'sidekiq', '~> 5.2', '>= 5.2.10'
 gem 'sidekiq-cron'
+gem 'rswag-api'
+gem 'rswag-ui'
